@@ -1,0 +1,37 @@
+TOKEN = ENV['DO_TOKEN']
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.network "private_network", type: "dhcp"
+
+  config.vm.define "appserver" do |appserver|
+    appserver.vm.hostname = "appserver"
+  end
+
+  config.vm.define "dbserver" do |dbserver|
+    dbserver.vm.hostname = "dbserver"
+  end
+
+  config.vm.provider :digital_ocean do |provider, override|
+    override.vm.box = 'digital_ocean'
+    override.vm.box_url = "https://github.com/devopsgroup-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+    override.ssh.private_key_path = '~/tmp/bth/digitalocean/.misc/do_rsa'
+    # Disable shared folders when running in cloud
+    override.vm.synced_folder ".", "/vagrant", disabled: true
+    # Workaround for explicitly disabling SMB
+    override.vm.allowed_synced_folder_types = [:rsync]
+
+    provider.token = TOKEN
+    provider.image = 'ubuntu-14-04-x64'
+    provider.region = 'nyc1'
+    provider.size = '512mb'
+    provider.setup = false
+  end
+
+  # Bootstrap puppet using 'puppet_install'
+  config.puppet_install.puppet_version = "5.5.6"
+
+  config.vm.provision "puppet" do |puppet|
+    puppet.module_path = "modules"
+  end
+end
