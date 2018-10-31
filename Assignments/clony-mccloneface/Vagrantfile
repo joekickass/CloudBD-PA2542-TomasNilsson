@@ -1,0 +1,32 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-16.04"
+
+  config.vm.provider "virtualbox" do |vb|
+     vb.gui = true
+     vb.memory = "2048"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y gnome openjdk-8-jdk
+    mkdir QualitasCorpus
+    cd QualitasCorpus
+    wget ftp://custsrv1.bth.se/FTP/QualitasCorpus/*
+    tar xf QualitasCorpus-20130901r-pt1.tar
+    tar xf QualitasCorpus-20130901r-pt2.tar
+    yes | QualitasCorpus-20130901r/bin/install.pl
+    rm QualitasCorpus-20130901r-pt1.tar
+    rm QualitasCorpus-20130901r-pt2.tar
+    https://go.microsoft.com/fwlink/?LinkID=760868
+    add-apt-repository ppa:ubuntu-desktop/ubuntu-make
+    apt-get install ubuntu-make
+    umake ide visual-studio-code
+    mkdir $HOME/opt && cd $HOME/opt
+    wget https://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip
+    unzip apache-maven-3.5.4-bin.zip
+    rm apache-maven-3.5.4-bin.zip
+    mkdir $HOME/bin
+    ln -s $HOME/opt/apache-maven-3.5.4/bin/mvn $HOME/bin/mvn
+    echo 'export PATH=$HOME/bin:$PATH' >> $HOME/.bashrc
+  SHELL
+end
