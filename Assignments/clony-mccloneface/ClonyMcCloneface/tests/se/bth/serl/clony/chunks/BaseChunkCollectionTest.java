@@ -28,9 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -99,6 +97,26 @@ public class BaseChunkCollectionTest {
 		for(BaseChunkCollection bcc : collections) 
 			assertTrue(bcc.isEmpty());
 	}
+
+	@Test
+	public void testExpandEmpty() {
+        BaseChunkCollection collection = new ListChunkCollection();
+        int ret = collection.expand(Collections.emptyList(), Collections.emptyList());
+        assertEquals(0, ret);
+	}
+
+    @Test
+    public void testExpandOneChunkLists() {
+        BaseChunkCollection collection = new ListChunkCollection();
+        Chunk a = new Chunk("File A", "123", 7, 22);
+        Chunk a2 = new Chunk("File A", "234", 7, 22);
+        List<Chunk> la = Arrays.asList(a, a2);
+        Chunk b = new Chunk("File B", "123", 10, 24);
+        Chunk b2 = new Chunk("File B", "234", 10, 24);
+        List<Chunk> lb = Arrays.asList(b, b2);
+        int ret = collection.expand(la, lb);
+        assertEquals(2, ret);
+    }
 	
 	private int expectedNumberOfChunks(Path path, int chunkSize) throws Exception {
 		int exp = 0;

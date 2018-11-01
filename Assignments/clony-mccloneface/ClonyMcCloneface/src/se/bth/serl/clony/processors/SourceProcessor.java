@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import se.bth.serl.clony.chunks.BaseChunkCollection;
+import se.bth.serl.clony.chunks.Chunk;
 
 /**
  * 
@@ -38,7 +39,7 @@ import se.bth.serl.clony.chunks.BaseChunkCollection;
 public class SourceProcessor {
 	public static final int DEFAULT_CHUNKSIZE = 5;
 	private BaseChunkCollection chunkCollection;
-	private List<Path> listOfJavaFiles; 
+	private List<Path> listOfJavaFiles;
 	private int chunkSize;
 	private int totalFilesToProcess;
 	private int currentFilesProcessed;
@@ -61,18 +62,26 @@ public class SourceProcessor {
 	}
 	
 	public BaseChunkCollection populateChunkCollection() {
-		if(chunkCollection.isEmpty() && totalFilesToProcess > 0) {				
+		if(chunkCollection.isEmpty() && totalFilesToProcess > 0) {
 			for(Path p : listOfJavaFiles) {
 				SourceReader sr = new SourceReader(p);
 				List<SourceLine> sourceLines = sr.getOnlySourceWithContent();
 				int numLines = sourceLines.size();
-				
-				// TODO iterate over the sourceLines, create chunks and add them to the chunkCollection
-					
+
+				// TODO: How to handle numLines < chunkSize
+				for (int i = 0; i < numLines - chunkSize + 1; i++) {
+					SourceLine base = sourceLines.get(i);
+					int startLineNumber = base.getLineNumber();
+					int endLineNumber = startLineNumber + chunkSize - 1;
+					String content = sourceLines.subList(i, i + chunkSize).stream().map(l -> l.getContent()).reduce("", String::concat);
+					Chunk c = new Chunk(p.toString(), content, startLineNumber, endLineNumber);
+					chunkCollection.addChunk(c);
+				}
+
 				totalLinesProcessed += sourceLines.size();
 				currentFilesProcessed++;
 				
-				if(currentFilesProcessed%100 == 0) 
+				if(currentFilesProcessed%100 == 0)
 					System.out.println("Files processed: " + currentFilesProcessed + "/" + totalFilesToProcess);
 			}
 		}

@@ -42,9 +42,21 @@ public abstract class BaseChunkCollection {
 	public abstract SortedSet<Clone> getClones();
 	
 	public abstract boolean isEmpty();
-	
-	//TODO implement expansion. HINT: think recursively
+
+    /**
+     * Return the number of matching items in the lists, starting from the top
+     *
+     * @param a sublist
+     * @param b sublist
+     * @return the number of consecutive matching lines
+     */
 	protected int expand(List<Chunk> a, List<Chunk> b) {
-		return 0;
+        if (a.isEmpty() || b.isEmpty()) {
+            return 0;
+        }
+        if (a.get(0).getChunkContent().equals(b.get(0).getChunkContent())) {
+            return 1 + expand(a.subList(1, a.size()), b.subList(1, b.size()));
+        }
+        return 0;
 	}
 }

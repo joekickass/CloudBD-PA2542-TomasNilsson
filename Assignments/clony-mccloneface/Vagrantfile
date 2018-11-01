@@ -17,16 +17,5 @@ Vagrant.configure("2") do |config|
     yes | QualitasCorpus-20130901r/bin/install.pl
     rm QualitasCorpus-20130901r-pt1.tar
     rm QualitasCorpus-20130901r-pt2.tar
-    https://go.microsoft.com/fwlink/?LinkID=760868
-    add-apt-repository ppa:ubuntu-desktop/ubuntu-make
-    apt-get install ubuntu-make
-    umake ide visual-studio-code
-    mkdir $HOME/opt && cd $HOME/opt
-    wget https://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip
-    unzip apache-maven-3.5.4-bin.zip
-    rm apache-maven-3.5.4-bin.zip
-    mkdir $HOME/bin
-    ln -s $HOME/opt/apache-maven-3.5.4/bin/mvn $HOME/bin/mvn
-    echo 'export PATH=$HOME/bin:$PATH' >> $HOME/.bashrc
   SHELL
 end

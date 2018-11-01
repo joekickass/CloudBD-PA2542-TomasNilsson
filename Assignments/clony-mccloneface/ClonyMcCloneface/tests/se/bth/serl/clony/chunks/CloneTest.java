@@ -72,7 +72,7 @@ public class CloneTest {
 		chunksA.add(new Chunk("FileA.java", "aaa", 0, 1));
 		chunksA.add(new Chunk("FileA.java", "bbb", 1, 2));
 		chunksA.add(new Chunk("FileB.java", "ccc", 2, 3));
-		
+
 		LinkedList<Chunk> chunksB = new LinkedList<>();
 		chunksB.add(new Chunk("FileB.java", "aaa", 8, 9));
 		chunksB.add(new Chunk("FileB.java", "bbb", 9, 10));

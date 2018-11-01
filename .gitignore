@@ -1,3 +1,5 @@
 *-DoNotCommit*
 .vagrant
 .vscode
+.DS_Store
+.idea
