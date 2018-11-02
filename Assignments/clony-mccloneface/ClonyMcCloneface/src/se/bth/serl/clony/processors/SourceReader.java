@@ -24,6 +24,7 @@ package se.bth.serl.clony.processors;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.mozilla.universalchardet.UniversalDetector;
 
 /**
  * 
@@ -99,10 +102,19 @@ public class SourceReader {
 	}
 	
 	private static List<String> readFileContent(File file) {
-		List<String> lines = null; 
-		
+		List<String> lines = null;
+
 		try {
-			lines = Files.readAllLines(file.toPath());
+			// Try to detect charset
+            String encoding = UniversalDetector.detectCharset(file);
+            if (encoding != null) {
+				System.out.println("Detected charset: " + encoding + " in " + file.getName());
+				Charset charset = Charset.forName(encoding);
+				lines = Files.readAllLines(file.toPath(), charset);
+            } else {
+				System.out.println("No charset detected in " + file.getName());
+				lines = Files.readAllLines(file.toPath());
+            }
 		}
 		catch(IOException e) {
 			e.printStackTrace();

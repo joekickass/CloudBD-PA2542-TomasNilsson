@@ -46,8 +46,8 @@ public abstract class BaseChunkCollection {
     /**
      * Return the number of matching items in the lists, starting from the top
      *
-     * @param a sublist
-     * @param b sublist
+     * @param a list
+     * @param b list
      * @return the number of consecutive matching lines
      */
 	protected int expand(List<Chunk> a, List<Chunk> b) {

@@ -20,5 +20,14 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="juniversalchardet">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/juniversalchardet-2.2.1-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
