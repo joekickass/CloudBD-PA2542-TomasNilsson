@@ -25,6 +25,7 @@ package se.bth.serl.clony.processors;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,12 @@ public class SourceProcessor {
 		this.totalLinesProcessed = 0;
 		
 		try {
-			this.listOfJavaFiles = Files.walk(rootFolder, Integer.MAX_VALUE).filter(Files::isRegularFile).filter(p -> p.toString().endsWith(".java")).collect(Collectors.toList());
+			this.listOfJavaFiles = Files
+					.walk(rootFolder, Integer.MAX_VALUE)
+					.filter(Files::isRegularFile)
+					.filter(p -> p.toString().endsWith(".java"))
+					.sorted(Comparator.comparing(Path::getFileName))
+					.collect(Collectors.toList());
 			this.totalFilesToProcess = listOfJavaFiles.size();
 		}
 		catch(IOException e) {
@@ -68,12 +74,13 @@ public class SourceProcessor {
 				List<SourceLine> sourceLines = sr.getOnlySourceWithContent();
 				int numLines = sourceLines.size();
 
-				// TODO: How to handle numLines < chunkSize
-				for (int i = 0; i < numLines - chunkSize + 1; i++) {
-					SourceLine base = sourceLines.get(i);
-					int startLineNumber = base.getLineNumber();
-					int endLineNumber = startLineNumber + chunkSize - 1;
-					String content = sourceLines.subList(i, i + chunkSize).stream().map(l -> l.getContent()).reduce("", String::concat);
+				for (int i = 0; i < numLines - chunkSize + 1; ++i) {
+					int firstChunkLine = i;
+					int lastChunkLine = i + chunkSize - 1;
+					String content = sourceLines.subList(i, lastChunkLine + 1).stream().map(l -> l.getContent()).reduce("", String::concat);
+					// Get the actual line numbers (lines might be stripped from whitespace)!
+					int startLineNumber = sourceLines.get(firstChunkLine).getLineNumber();
+					int endLineNumber = sourceLines.get(lastChunkLine).getLineNumber();
 					Chunk c = new Chunk(p.toString(), content, startLineNumber, endLineNumber);
 					chunkCollection.addChunk(c);
 				}
